@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styled Whiteboard with Download Button</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            overflow: hidden;
+            background-color: #ffffff;
+        }
+
+        #whiteboard-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: inherit;
+            cursor: crosshair;
+        }
+
+        .tool-btn {
+            position: fixed;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #007700;
+            text-decoration: none;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .tool-btn:hover {
+            background-color: #2980b9;
+        }
+
+        #download-btn {
+            top: 20px;
+            right: 20px;
+            background-color: #3498db;
+        }
+
+        #color-picker {
+            top: 70px;
+            right: 20px;
+        }
+
+        #thickness-slider {
+            top: 120px;
+            right: 20px;
+            width: 150px;
+        }
+
+        #background-color-picker {
+            top: 170px;
+            right: 20px;
+        }
+
+        #draw-btn {
+            top: 220px;
+            right: 20px;
+            background-color: #3498db;
+        }
+
+        #img-btn {
+            top: 270px;
+            right: 20px;
+            background-color: #3498db;
+        }
+
+        #shapes-btn {
+            top: 320px;
+            right: 20px;
+            background-color: #e67e22;
+        }
+
+        .shapes-bar {
+            display: none;
+            position: fixed;
+            top: 370px;
+            right: 20px;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .shapes-bar input,
+        .shapes-bar button {
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .dropdown {
+            position: fixed;
+            top: 420px;
+            right: 20px;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            padding: 12px 16px;
+            display: block;
+            text-decoration: none;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Add subtle animation to the background (optional) */
+        body {
+            animation: background-animation 5s linear infinite;
+        }
+
+        @keyframes background-animation {
+            from {
+                background-position: 0 0;
+            }
+
+            to {
+                background-position: 100px 50px;
+            }
+            /* Adjust values as needed */
+        }
+    </style>
+    <script>
+        window.onerror = function() {
+          window.location.href = "/404.html";
+        };
+      </script>
+</head>
+
+<body>
+
+    <canvas id="whiteboard-container"></canvas>
+
+    <a href="#" id="download-btn" class="tool-btn" onclick="downloadImage()">Download Drawing as JPEG</a>
+
+    <input type="color" id="color-picker" class="tool-btn" value="#000000" onchange="changeColor()">
+
+    <div>
+        <label for="thickness-slider">Line Thickness:</label>
+        <input type="range" id="thickness-slider" class="tool-btn" min="1" max="20" value="5" onchange="changeThickness()">
+    </div>
+
+    <label for="background-color-picker">Background Color:</label>
+    <input type="color" id="background-color-picker" class="tool-btn" value="#ffffff" onchange="changeBackgroundColor()">
+
+    <button id="draw-btn" class="tool-btn" onclick="toggleDrawMode()">Draw Mode</button>
+
+    <button id="img-btn" class="tool-btn" onclick="openFileInput()">Open Image File</button>
+    <input type="file" id="file-input" accept=".jpeg, .jpg, .bmp, .png" style="display: none;" onchange="handleFileSelect(event)">
+    <button id="dra-btn" class="tool-btn" onclick="beck()">back</button>
+
+    <script>
+        const canvas = document.getElementById('whiteboard-container');
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+        let color = '#000000';
+        let thickness = 5;
+        let drawMode = true;
+        let drawLineMode = false;
+        let startX, startY;
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mousemove', draw);
+
+        function startDrawing(e) {
+            if (drawLineMode) {
+                startX = e.clientX;
+                startY = e.clientY;
+                draw(e);
+            } else {
+                drawing = true;
+                draw(e);
+            }
+        }
+
+        function stopDrawing() {
+            if (drawLineMode) {
+                drawLineMode = false;
+            } else {
+                drawing = false;
+                ctx.beginPath();
+            }
+        }
+
+        function draw(e) {
+            if (!drawing && !drawLineMode) return;
+
+            ctx.lineWidth = thickness;
+            ctx.lineCap = 'round';
+
+            if (drawMode) {
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.strokeStyle = color;
+            } else {
+                ctx.globalCompositeOperation = 'destination-out';
+            }
+
+            if (drawLineMode) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(e.clientX, e.clientY);
+                ctx.stroke();
+            } else {
+                ctx.lineTo(e.clientX, e.clientY);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(e.clientX, e.clientY);
+            }
+        }
+
+        function downloadImage() {
+            const bgColor = document.getElementById('background-color-picker').value;
+
+            const newCanvas = document.createElement('canvas');
+            newCanvas.width = window.innerWidth;
+            newCanvas.height = window.innerHeight;
+            const newCtx = newCanvas.getContext('2d');
+
+            newCtx.fillStyle = bgColor;
+            newCtx.fillRect(0, 0, newCanvas.width, newCanvas.height);
+            newCtx.drawImage(canvas, 0, 0);
+
+            const dataUrl = newCanvas.toDataURL('image/jpeg');
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = 'whiteboard_drawing.jpeg';
+            link.click();
+        }
+
+        function changeColor() {
+            color = document.getElementById('color-picker').value;
+        }
+
+        function changeThickness() {
+            thickness = document.getElementById('thickness-slider').value;
+        }
+
+        function changeBackgroundColor() {
+            const bgColor = document.getElementById('background-color-picker').value;
+            document.body.style.backgroundColor = bgColor;
+            canvas.style.backgroundColor = bgColor;
+        }
+
+        function toggleDrawMode() {
+            drawMode = !drawMode;
+            document.getElementById('draw-btn').innerText = drawMode ? 'Draw Mode' : 'Eraser Mode';
+        }
+
+        function openFileInput() {
+            // Trigger the click event of the file input when the button is clicked
+            document.getElementById('file-input').click();
+        }
+
+        function handleFileSelect(event) {
+            const fileInput = event.target;
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = new Image();
+                    img.onload = function () {
+                        // Clear the canvas
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                        // Draw the image onto the canvas
+                        ctx.drawImage(img, 0, 0);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function beck() {
+            window.location.href = "index.html";
+        }
+    </script>
+
+</body>
+
+</html>

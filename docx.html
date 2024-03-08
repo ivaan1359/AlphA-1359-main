@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Page</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+            position: fixed;
+            top: 0;
+            width: 100%;
+        }
+
+        li {
+            float: left;
+        }
+
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        li a:hover:not(.active) {
+            background-color: #111;
+        }
+
+        .active {
+            background-color: #04AA6D;
+        }
+
+        #editor {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow: auto;
+            margin-bottom: 10px;
+            background-color: #fff;
+            color: #000;
+        }
+
+        #toolbar,
+        #textOptions {
+            text-align: center;
+            margin-bottom: 10px;
+            background-color: #e6e6e6;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        section {
+            padding: 20px;
+            margin-top: 30px;
+            background-color: #1abc9c;
+            height: 1500px;
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #777;
+        }
+    </style>
+    <script>
+        window.onerror = function() {
+          window.location.href = "/404.html";
+        };
+      </script>
+</head>
+
+<body>
+
+    <ul>
+        <li><a href="#content">Editor</a></li>
+        <li><a href="#moreop">More Options</a></li>
+        <li><a href="#edit-opions">Edit Options</a></li>
+        <li><a href="#document">Local Documents</a></li>
+        <li><a href="index.html">Back</a></li>
+    </ul>
+
+    <div>
+        <section id="edit-opions">
+            <!-- Buttons for text formatting -->
+        </section>
+        <section id="moreop">
+            <!-- Input and buttons for more options -->
+        </section>
+        <section id="content">
+            <div id="editor" contenteditable="true"></div>
+        </section>
+        <section id="document">
+            <ul id="documentList"></ul>
+        </section>
+
+        <footer>
+            <p>&copy; 2024 #AlphA</p>
+        </footer>
+    </div>
+
+</body>
+
+</html>

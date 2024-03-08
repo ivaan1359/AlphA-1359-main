@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://replit.com/public/js/repl-auth-v2.js"></script>
+    <script>
+        window.onerror = function() {
+          window.location.href = "/404.html";
+        };
+      </script>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <a href="index.html">Back</a>
+    </div>
+
+    <div class="main">
+      <html lang="en">
+      </body>
+      </html>
+      <html>
+
+      <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <style>
+              body {
+                  margin: 0;
+                  font-family: Arial, Helvetica, sans-serif;
+              }
+
+              .navbar {
+                  overflow: hidden;
+                  background-color: #333;
+                  position: fixed;
+                  bottom: 0;
+                  width: 100%;
+              }
+
+              .navbar a {
+                  float: left;
+                  display: block;
+                  color: #f2f2f2;
+                  text-align: center;
+                  padding: 14px 16px;
+                  text-decoration: none;
+                  font-size: 17px;
+              }
+
+              .navbar a:hover {
+                  background: #f1f1f1;
+                  color: black;
+              }
+
+              .navbar a.active {
+                  background-color: #04AA6D;
+                  color: white;
+              }
+
+              .main {
+                  padding: 16px;
+                  margin-bottom: 30px;
+              }
+          </style>
+          <script src="https://replit.com/public/js/repl-auth-v2.js"></script>
+      </head>
+
+      <body>
+
+          <div class="navbar">
+              <a href="index.html">back</a>
+          </div>
+
+          <div class="main">
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Infinite Storage Page</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 20px;
+                        background-color: #f5f5f5;
+                    }
+
+                    form {
+                        margin-bottom: 20px;
+                    }
+
+                    #storageList {
+                        list-style-type: none;
+                        padding: 0;
+                        margin: 0;
+                    }
+
+                    li {
+                        border: 1px solid #ccc;
+                        padding: 10px;
+                        margin-bottom: 10px;
+                        position: relative;
+                        background-color: #fff;
+                        border-radius: 5px;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                    }
+
+                    .preview {
+                        max-width: 100%;
+                        max-height: 100px;
+                        display: block;
+                        margin: 10px 0;
+                    }
+
+                    .delete-button, .download-button {
+                        position: absolute;
+                        top: 5px;
+                        right: 5px;
+                        border: none;
+                        border-radius: 4px;
+                        padding: 5px;
+                        cursor: pointer;
+                        display: none;
+                    }
+
+                    li:hover .delete-button,
+                    li:hover .download-button {
+                        display: block;
+                    }
+
+                    .message {
+                        margin-bottom: 10px;
+                    }
+
+                    .message .delete-button,
+                    .message .download-button {
+                        top: 0;
+                    }
+                </style>
+            </head>
+            <body>
+
+                <h1>Infinite Storage Page</h1>
+
+                <form id="storageForm">
+                    <label for="dataKey">Key:</label>
+                    <input type="text" id="dataKey" required>
+
+                    <label for="dataValue">Value:</label>
+                    <input type="text" id="dataValue" required>
+
+                    <label for="fileInput">Upload File:</label>
+                    <input type="file" id="fileInput">
+
+                    <button type="button" onclick="saveData()">Save Data</button>
+                </form>
+
+                <label for="search">Search:</label>
+                <input type="text" id="search" oninput="searchData()">
+
+                <button type="button" onclick="searchAll()">Search All</button>
+
+                <h2>Stored Data:</h2>
+                <ul id="storageList"></ul>
+
+                <button type="button" onclick="downloadData()">Download Data</button>
+
+                <script>
+                    function saveData() {
+                        var key = document.getElementById("dataKey").value;
+                        var value = document.getElementById("dataValue").value;
+                        var fileInput = document.getElementById("fileInput");
+
+                        // Retrieve existing data or initialize an empty array
+                        var storedData = JSON.parse(localStorage.getItem("storedData")) || [];
+
+                        // Handle file upload
+                        var file = fileInput.files[0];
+                        var fileUrl = null;
+
+                        if (file) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                fileUrl = e.target.result;
+                                saveDataWithFile();
+                            };
+                            reader.readAsDataURL(file);
+                        } else {
+                            // If no file is selected, save data without file
+                            saveDataWithFile();
+                        }
+
+                        function saveDataWithFile() {
+                            // Add the new data to the array
+                            storedData.push({ key: key, value: value, file: fileUrl });
+
+                            // Save the updated array back to local storage
+                            localStorage.setItem("storedData", JSON.stringify(storedData));
+
+                            // Clear the form fields
+                            document.getElementById("storageForm").reset();
+
+                            // Refresh the displayed data
+                            displayStoredData();
+                        }
+                    }
+
+                    function deleteData(index) {
+                        var storedData = JSON.parse(localStorage.getItem("storedData")) || [];
+                        storedData.splice(index, 1);
+                        localStorage.setItem("storedData", JSON.stringify(storedData));
+                        displayStoredData();
+                    }
+
+                    function displayStoredData() {
+                        var storageList = document.getElementById("storageList");
+                        storageList.innerHTML = "";
+
+                        // Retrieve stored data
+                        var storedData = JSON.parse(localStorage.getItem("storedData")) || [];
+
+                        // Display each stored item
+                        storedData.forEach(function(item, index) {
+                            var listItem = document.createElement("li");
+
+                            // Display message
+                            listItem.innerHTML = "<div class='message'><strong>Key:</strong> " + item.key +
+                                                 "<br><strong>Value:</strong> " + item.value;
+
+                            // Display file preview if available
+                            if (item.file) {
+                                listItem.innerHTML += "<br><strong>File:</strong>";
+
+                                // Display preview for supported file formats
+                                if (item.file.startsWith("data:image")) {
+                                    listItem.innerHTML += "<img class='preview' src='" + item.file + "' alt='Preview'>";
+                                } else if (item.file.toLowerCase().endsWith(".docx") || item.file.toLowerCase().endsWith(".pptx")) {
+                                    // Display first 3 lines for .docx and .pptx files
+                                    var lines = item.value.split("\n").slice(0, 3).join("\n");
+                                    listItem.innerHTML += "<pre>" + lines + "...</pre>";
+                                } else if (item.file.toLowerCase().endsWith(".png") || item.file.toLowerCase().endsWith(".jpeg")) {
+                                    // Display preview for .png and .jpeg images
+                                    listItem.innerHTML += "<img class='preview' src='" + item.file + "' alt='Preview'>";
+                                } else {
+                                    // Display a generic preview for other file formats
+                                    listItem.innerHTML += "<em>Preview not available</em>";
+                                }
+
+                                // Add delete button for messages with files
+                                listItem.innerHTML += "<button class='delete-button' onclick='deleteData(" + index + ")'>Delete</button>";
+
+                                // Add download button for messages with files
+                                listItem.innerHTML += "<a class='download-button' href='" + item.file + "' download>Download File</a>";
+                            }
+
+                            listItem.innerHTML += "</div>"; // close message div
+
+                            // Add delete button for messages without files
+                            listItem.innerHTML += "<button class='delete-button' onclick='deleteData(" + index + ")'>Delete</button>";
+
+                            storageList.appendChild(listItem);
+                        });
+                    }
+
+                    function searchData() {
+                        var searchTerm = document.getElementById("search").value.toLowerCase();
+                        var storedData = JSON.parse(localStorage.getItem("storedData")) || [];
+                        var filteredData = storedData.filter(function(item) {
+                            return item.key.toLowerCase().includes(searchTerm) || 
+                                   item.value.toLowerCase().includes(searchTerm) || 
+                                   (item.file && item.file.toLowerCase().includes(searchTerm));
+                        });
+                        displayStoredData(filteredData);
+                    }
+
+                    function searchAll() {
+                        var searchTerm = document.getElementById("search").value.toLowerCase();
+                        var storedData = JSON.parse(localStorage.getItem("storedData")) || [];
+                        var filteredData = storedData.filter(function(item) {
+                            return item.key.toLowerCase().includes(searchTerm) || 
+                                   item.value.toLowerCase().includes(searchTerm) || 
+                                   (item.file && item.file.toLowerCase().includes(searchTerm));
+                        });
+                        displayStoredData(filteredData);
+                    }
+
+                    function downloadData() {
+                        var storedData = JSON.parse(localStorage.getItem("storedData")) || [];
+                        var dataToDownload = JSON.stringify(storedData, null, 2);
+
+                        // Create a Blob containing the JSON data
+                        var blob = new Blob([dataToDownload], { type: 'application/json' });
+
+                        // Create a download link
+                        var a = document.createElement('a');
+                        a.href = window.URL.createObjectURL(blob);
+                        a.download = 'storedData.json';
+
+                        // Append the link to the body and trigger the download
+                        document.body.appendChild(a);
+                        a.click();
+
+                        // Remove the link from the body
+                        document.body.removeChild(a);
+                    }
+
+                    // Display existing stored data when the page loads
+                    displayStoredData();
+                </script>
+
+            </body>
+            </html>
+              <script type="module">
+                  const user = await getUserInfo()
+              </script>
+          </div>
+
+      </body>
+
+    </div>
+
+</body>
+
+</html>
